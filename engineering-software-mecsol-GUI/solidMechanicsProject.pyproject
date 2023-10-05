@@ -1,0 +1,3 @@
+{
+    "files": ["calculationsCodes/distload_beam.py","calculationsCodes/stiff_beam.py","saveDatas.py","img.qrc","sampleDatas.py","form.ui","calculationsCodes/Displacement_beam.py","calculationsCodes/Stress_beam.py","calculationsCodes/fem_data_beam.py","calculationsCodes/main_beam.py","mainwindow.py","getGraph.py"]
+}

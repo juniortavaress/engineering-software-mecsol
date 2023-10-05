@@ -1,0 +1,132 @@
+import sys
+import numpy as np
+
+from PySide6.QtWidgets import QApplication, QMainWindow, QGraphicsOpacityEffect
+from PySide6.QtCore import QPropertyAnimation
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from ui_form import Ui_MainWindow
+
+#from calculationsCodes.stiff_beam import stiff_beam
+#from calculationsCodes.distload_beam import distload_beam
+from calculationsCodes.Stress_beam import stress_beam
+from calculationsCodes.Displacement_beam import Displacement_beam
+import img
+
+from sampleDatas import SampleData
+from saveDatas import SaveDatas
+from getGraph import GetGraph
+
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        self.Canvas()
+        self.resizeEvent = self.ResizeGraph
+
+        self.ui.startButton.clicked.connect(lambda: GetGraph.startFunction(self))
+
+
+        self.ui.nextButtonInitial.clicked.connect(lambda: SaveDatas.saveData(self))
+        self.ui.nextButtonNo.clicked.connect(lambda: SaveDatas.saveCoordnodais(self))
+        self.ui.nextButtonIncidencias.clicked.connect(lambda: SaveDatas.saveCoordelement(self))
+        self.ui.nextButtonLiberdade.clicked.connect(lambda: SaveDatas.saveGrausliberdade(self))
+
+
+
+        self.ui.domainBox.currentIndexChanged.connect(lambda: GetGraph.plotGraph(self))
+#        self.ui.mainBox.currentIndexChanged.connect(lambda: GetGraph.getElement(self, "change"))
+
+
+    def Canvas(self):
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+        self.ax.relim()
+        self.ax.autoscale_view()
+        self.fig.set_facecolor('#FFDDDD')
+        self.canvas = FigureCanvas(self.fig)
+        size = self.ui.frame_112.size()
+        self.canvas.setGeometry(0, 0, size.width(), size.height())
+#        self.canvas.setGeometry(self.ui.frame_112.contentsRect())
+        self.canvas.setParent(self.ui.frame_112)
+
+
+
+
+    def ResizeGraph(self, event):
+        size = self.ui.frame_112.size()
+        self.canvas.setGeometry(0, 0, size.width(), size.height())
+        self.ax.figure.set_size_inches(size.width() / self.fig.dpi, size.height() / self.fig.dpi)
+        self.ax.figure.tight_layout()
+        self.canvas.draw()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def setData(self, n):
+
+#        global xx, yy, sig, Nex, Mex, Vex, sig_eq_max, U, z, mx, my
+        # Determinação do valor máximo da tensão equivalente de von Mises no n-ésimo elemento
+        self.SigMax = np.max(self.sig)
+        self.sig_eq_max[n] = self.SigMax
+
+        # Impressão do valor máximo da tensão equivalente de von Mises para o n-ésimo elemento
+        #print("Determinação da tensão equivalente de von Mises máxima no elemento =", n+1)
+        #print(f"Tensão equivalente de von Mises máxima no elemento {n+1} =", SigMax)
+
+
+        # Impressão da tensão equivalente de von Mises máxima em toda a estrutura
+        self.SigMaxMax = np.max(self.sig_eq_max)
+        print(self.SigMaxMax)
+        #print("")
+        #print("A tensão equivalente máxima de von Mises em toda a estrutura =", SigMaxMax)
+        self.SigMaxMax = round(self.SigMaxMax, 2)
+        self.ui.label_20.setText(str(self.SigMaxMax))
+
+
+        # Cálculo das magnitudes máximas de deslocamento em cada elemento e na estrutura
+        self.z1, self.dispNorm, self.xu, self.yv, x, y = Displacement_beam(self.U, self.z, self.mx)
+        self.dispNorm = round(self.dispNorm, 8)
+        self.ui.label_19.setText(str(self.dispNorm))
+
+
+
+    def nextPage(self, page):
+        self.ui.stackedWidget.setCurrentWidget(page)
+        fadeIn = QGraphicsOpacityEffect(page)
+        self.animation = QPropertyAnimation(fadeIn, b"opacity")
+        page.setGraphicsEffect(fadeIn)
+        self.animation.setDuration(500)
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(1)
+        self.animation.start()
+
+
+
+
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    widget = MainWindow()
+    widget.show()
+    sys.exit(app.exec())

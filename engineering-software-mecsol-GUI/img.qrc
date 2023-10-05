@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>img/downArrow.png</file>
+        <file>img/downArrowDis.png</file>
+        <file>img/icon.png</file>
+        <file>img/settingsEnable.png</file>
+    </qresource>
+</RCC>
