@@ -1,0 +1,4 @@
+﻿{
+    "files": ["beam_analysis/distload_beam.py","beam_analysis/stiff_beam.py","beam_analysis/displacement_beam.py","beam_analysis/stress_beam.py","beam_analysis/fem_data_beam.py","beam_analysis/main_beam.py","gui/main_window.py","gui/graph_controller.py","gui/data_entry.py","gui/sample_data.py","ui/form.ui","ui/ui_form.py","resources/img.qrc","resources/img_rc.py","mainwindow.py"]
+}
+
